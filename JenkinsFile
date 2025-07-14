@@ -68,7 +68,7 @@ pipeline {
                 emailext(
                     subject: "Pipeline ${buildstatus}: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                     body: """
-                        <p>This is a Jenkins amazon-prime-video CICD pipeline status.</p>
+                        <p>This is a Jenkins TestDeploy CICD pipeline status.</p>
                         <p>Project: ${env.JOB_NAME}</p>
                         <p>Build Number: ${env.BUILD_NUMBER}</p>
                         <p>Build Status: ${buildstatus}</p>
