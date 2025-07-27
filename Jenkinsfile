@@ -1,25 +1,31 @@
 pipeline {
-  agent any
+  agent {
+    label 'slave-node'
+  }
+
+  environment {
+    GIT_CREDENTIALS_ID = 'JenkinsTest'
+  }
 
   stages {
     stage('Info') {
       steps {
-        echo "Running branch: ${env.BRANCH_NAME}"
+        echo "Building branch: ${env.BRANCH_NAME}"
       }
     }
 
-    stage('Build') {
+    stage('Deploy') {
       steps {
         script {
           if (env.BRANCH_NAME == 'main') {
-            echo "✅ This is main — deploying to Production!"
-            // your prod deploy steps
-          } else if (env.BRANCH_NAME == 'develop') {
-            echo "🧪 This is develop — deploying to Staging!"
-            // your staging deploy steps
+            echo "Deploying to production server..."
+            sh '''
+            cp WebPage/index.html /var/www/html/index.html
+            sudo systemctl restart apache2
+            '''
           } else {
-            echo "✨ This is feature branch — running tests only."
-            // your test steps
+            echo "Not production — only verifying HTML exists."
+            sh 'ls -l WebPage/index.html'
           }
         }
       }
@@ -28,7 +34,7 @@ pipeline {
 
   post {
     always {
-      echo "Pipeline for ${env.BRANCH_NAME} finished!"
+      echo "Pipeline done for branch: ${env.BRANCH_NAME}"
     }
   }
 }
